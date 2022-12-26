@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_note"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:orientation="vertical"
+    android:padding="@dimen/_8sdp"
+    android:id="@+id/note_container">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tv_note_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:fontFamily="@font/ubuntu_bold"
+        android:textSize="@dimen/_13ssp"
+        android:includeFontPadding="false"
+        android:text="@string/note_title" />
+
+    <TextView
+        android:id="@+id/tv_note_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/noteSubtitleTextColor"
+        android:fontFamily="@font/ubuntu"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:textSize="@dimen/_11ssp"
+        android:includeFontPadding="false"
+        android:text="@string/note_title" />
+
+    <TextView
+        android:id="@+id/tv_note_datetime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/noteSubtitleTextColor"
+        android:fontFamily="@font/ubuntu"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:textSize="@dimen/_7ssp"
+        android:includeFontPadding="false"
+        android:text="@string/note_title" />
+
+</LinearLayout>

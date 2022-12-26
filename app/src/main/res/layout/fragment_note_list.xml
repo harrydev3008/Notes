@@ -64,8 +64,9 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintTop_toBottomOf="@+id/edt_search_note"
-        android:paddingEnd="@dimen/_12sdp"
-        android:paddingBottom="@dimen/_12sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_8sdp"
+        tools:listitem="@layout/layout_note_item"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2"
         android:clipToPadding="false"/>

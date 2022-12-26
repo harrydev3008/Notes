@@ -26,7 +26,7 @@
     <color name="noteColor2">#FDBE3B</color>
     <color name="noteColor3">#FF4842</color>
     <color name="noteColor4">#3A52FC</color>
-    <color name="noteColor5">#000000</color>
+    <color name="noteColor5">#2a9d8f</color>
     <color name="deleteColor">#FF4842</color>
     <color name="searchBackground">#333333</color>
 </resources>

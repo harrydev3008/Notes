@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="noteViewModel"
+            type="com.hisu.notes.view_model.NoteViewModel" />
+
+        <variable
+            name="createNoteFragment"
+            type="com.hisu.notes.ui.create_note.CreateNoteFragment" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/_6sdp"
+        app:behavior_peekHeight="@dimen/_40sdp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <TextView
+            android:id="@+id/tv_options_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:text="@string/miscellaneous"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="@dimen/_14sdp"
+            android:fontFamily="@font/ubuntu_medium"
+            android:includeFontPadding="false"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:background="@color/searchIconColor"/>
+
+        <RadioGroup
+            android:id="@+id/note_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/_10sdp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/bg_radio_button_1"
+                android:button="@android:color/transparent"
+                android:onClick='@{() -> createNoteFragment.setSubtitleDividerColor("#333333")}'/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/bg_radio_button_2"
+                android:button="@android:color/transparent"
+                android:onClick='@{() -> createNoteFragment.setSubtitleDividerColor("#FDBE3B")}'/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/bg_radio_button_3"
+                android:button="@android:color/transparent"
+                android:onClick='@{() -> createNoteFragment.setSubtitleDividerColor("#FF4842")}'/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/bg_radio_button_4"
+                android:button="@android:color/transparent"
+                android:onClick='@{() -> createNoteFragment.setSubtitleDividerColor("#3A52FC")}'/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/bg_radio_button_5"
+                android:button="@android:color/transparent"
+                android:onClick='@{() -> createNoteFragment.setSubtitleDividerColor("#2a9d8f")}'/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pick_color"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                android:fontFamily="@font/ubuntu_medium"
+                android:includeFontPadding="false"/>
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_image"
+            android:textSize="@dimen/_16ssp"
+            android:fontFamily="@font/ubuntu"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:onClick="@{() -> createNoteFragment.requestPermissionsStorage()}"
+            android:drawableLeft="@drawable/ic_round_image"
+            android:drawablePadding="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tv_add_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_url"
+            android:textSize="@dimen/_16ssp"
+            android:fontFamily="@font/ubuntu"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:onClick="@{() -> createNoteFragment.addUrl()}"
+            android:drawableLeft="@drawable/ic_web"
+            android:drawablePadding="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tv_delete_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_note"
+            android:textSize="@dimen/_16ssp"
+            android:fontFamily="@font/ubuntu"
+            android:onClick="@{() -> createNoteFragment.deleteNote()}"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:drawableLeft="@drawable/ic_delete"
+            android:drawablePadding="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textColor="@color/deleteColor"/>
+
+    </LinearLayout>
+</layout>

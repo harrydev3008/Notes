@@ -5,8 +5,8 @@
     <string name="note_title">Note title</string>
     <string name="note_subtitle">Note Subtitle</string>
     <string name="type_note_here">Your note goes here..</string>
-    <string name="miscellaneous">Miscellaneous</string>
-    <string name="pick_color">Pick Color</string>
+    <string name="miscellaneous">More Options</string>
+    <string name="pick_color">Note Color</string>
     <string name="value_color">%s</string>
     <string name="add_image">Add image</string>
     <string name="add_url">Add URL</string>

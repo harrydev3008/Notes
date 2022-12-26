@@ -5,32 +5,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.hisu.notes.MyApplication
 import com.hisu.notes.R
 import com.hisu.notes.databinding.FragmentNoteListBinding
-
-
-private const val ARG_PARAM1 = "param1"
+import com.hisu.notes.repository.NoteRepository
+import com.hisu.notes.view_model.NoteViewModel
+import com.hisu.notes.view_model.NoteViewModelProviderFactory
 
 class NoteListFragment : Fragment() {
 
     private var _binding: FragmentNoteListBinding?= null
     private val binding get() = _binding!!
+    private lateinit var noteAdapter: NoteAdapter
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NoteListFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
+    private val noteViewModel: NoteViewModel by activityViewModels() {
+        NoteViewModelProviderFactory(
+            NoteRepository(
+                requireActivity().applicationContext,
+                (activity?.application as MyApplication).database.noteDAO()
+            )
+        )
     }
 
     override fun onCreateView(
@@ -43,12 +41,37 @@ class NoteListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         addActionForBtnAddNote()
+
+        noteAdapter = NoteAdapter {
+            val action = NoteListFragmentDirections.listToCreate(it.id)
+            findNavController().navigate(action)
+        }
+
+        binding.rvNotes.apply {
+            adapter = noteAdapter
+        }
+
+        noteViewModel.getAllNotes().observe(this.viewLifecycleOwner) {
+            val res = it
+
+            res?.let {
+                noteAdapter.notes = res
+            }
+        }
+
+        binding.edtSearchNote.addTextChangedListener {
+            noteViewModel.searchNote(it.toString()).observe(this.viewLifecycleOwner) { notes ->
+                notes?.let {
+                    noteAdapter.notes = notes
+                }
+            }
+        }
     }
 
     private fun addActionForBtnAddNote() = binding.ibtnAddNote.setOnClickListener {
-        findNavController().navigate(R.id.list_to_create)
+        val action = NoteListFragmentDirections.listToCreate(-1)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {
