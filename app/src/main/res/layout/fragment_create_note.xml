@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primaryColor"
+    tools:context=".ui.create_note.CreateNoteFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/_40sdp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_10sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true">
+
+            <LinearLayout
+                android:id="@+id/back_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_arrow_left"/>
+
+                <TextView
+                    android:id="@+id/tv_my_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:textColor="@color/accentColor"
+                    android:text="@string/app_title"
+                    android:textSize="@dimen/_12sdp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/ibtn_save"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:background="@drawable/bg_done_btn"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_done"
+                app:layout_constraintBottom_toBottomOf="@+id/back_container"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toTopOf="@+id/back_container" />
+
+            <EditText
+                android:id="@+id/edt_note_title"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@null"
+                android:fontFamily="@font/ubuntu_bold"
+                android:hint="@string/note_title"
+                android:imeOptions="actionNone"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="@color/textHintColor"
+                android:textSize="@dimen/_16ssp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toBottomOf="@+id/back_container"
+                tools:ignore="Autofill" />
+
+            <TextView
+                android:id="@+id/tv_datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ubuntu"
+                android:includeFontPadding="false"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:text="@string/app_name"
+                android:textColor="@color/iconsColor"
+                android:textSize="@dimen/_10ssp"
+                app:layout_constraintEnd_toEndOf="@+id/edt_note_title"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toBottomOf="@+id/edt_note_title" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="@dimen/_5sdp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_sub_title_divider"
+                app:layout_constraintBottom_toBottomOf="@+id/edt_note_sub_title"
+                app:layout_constraintStart_toStartOf="@+id/tv_datetime"
+                app:layout_constraintTop_toTopOf="@+id/edt_note_sub_title" />
+
+            <EditText
+                android:id="@+id/edt_note_sub_title"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:background="@null"
+                android:fontFamily="@font/ubuntu"
+                android:hint="@string/note_subtitle"
+                android:imeOptions="actionNone"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:textColorHint="@color/textHintColor"
+                android:textSize="@dimen/_16ssp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toEndOf="@+id/divider"
+                app:layout_constraintTop_toBottomOf="@+id/tv_datetime"
+                tools:ignore="Autofill" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/_12sdp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/_12sdp" />
+
+            <EditText
+                android:id="@+id/edt_note_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:background="@null"
+                android:fontFamily="@font/ubuntu"
+                android:gravity="top"
+                android:hint="@string/type_note_here"
+                android:imeOptions="actionNone"
+                android:inputType="textMultiLine"
+                android:minHeight="@dimen/_100sdp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/textHintColor"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toBottomOf="@+id/edt_note_sub_title"
+                tools:ignore="Autofill" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

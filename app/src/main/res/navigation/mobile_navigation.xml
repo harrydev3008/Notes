@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/noteListFragment">
+
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:name="com.hisu.notes.ui.note_list.NoteListFragment"
+        android:label="NoteListFragment" >
+        <action
+            android:id="@+id/list_to_create"
+            app:destination="@id/createNoteFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/createNoteFragment"
+        android:name="com.hisu.notes.ui.create_note.CreateNoteFragment"
+        android:label="CreateNoteFragment" >
+        <action
+            android:id="@+id/create_to_list"
+            app:destination="@id/noteListFragment"
+            app:popUpTo="@id/noteListFragment"
+            app:popUpToInclusive="true"/>
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+</navigation>
