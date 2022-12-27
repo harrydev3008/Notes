@@ -170,21 +170,43 @@
                     android:contentDescription="@string/app_name" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tv_url"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/note_url_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:autoLink="web"
-                android:visibility="gone"
-                android:linksClickable="true"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:textSize="@dimen/_14ssp"
-                android:drawableRight="@drawable/ic_baseline_remove"
-                android:textColor="@color/noteColor4"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
-                app:layout_constraintTop_toBottomOf="@+id/note_image_container"/>
+                app:layout_constraintTop_toBottomOf="@+id/note_image_container">
+
+                <TextView
+                    android:id="@+id/tv_url"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:linksClickable="true"
+                    android:text="@string/app_name"
+                    android:textColor="@color/noteColor4"
+                    android:textSize="@dimen/_14ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/ibtn_remove_url"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ibtn_remove_url"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_baseline_remove"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_url"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <EditText
                 android:id="@+id/edt_note_input"
@@ -206,7 +228,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
-                app:layout_constraintTop_toBottomOf="@+id/tv_url"
+                app:layout_constraintTop_toBottomOf="@+id/note_url_container"
                 app:layout_constraintVertical_bias="1.0"
                 tools:ignore="Autofill" />
 

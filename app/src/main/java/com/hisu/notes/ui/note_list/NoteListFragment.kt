@@ -1,16 +1,15 @@
 package com.hisu.notes.ui.note_list
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hisu.notes.MyApplication
-import com.hisu.notes.R
 import com.hisu.notes.databinding.FragmentNoteListBinding
 import com.hisu.notes.repository.NoteRepository
 import com.hisu.notes.view_model.NoteViewModel
@@ -18,7 +17,7 @@ import com.hisu.notes.view_model.NoteViewModelProviderFactory
 
 class NoteListFragment : Fragment() {
 
-    private var _binding: FragmentNoteListBinding?= null
+    private var _binding: FragmentNoteListBinding? = null
     private val binding get() = _binding!!
     private lateinit var noteAdapter: NoteAdapter
 
@@ -41,37 +40,38 @@ class NoteListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addActionForBtnAddNote()
 
-        noteAdapter = NoteAdapter {
-            val action = NoteListFragmentDirections.listToCreate(it.id)
+        setUpNoteRecyclerView()
+        addActionForBtnAddNote()
+        addActionForEdtSearch()
+        getNotes()
+    }
+
+    private fun setUpNoteRecyclerView() = binding.rvNotes.apply {
+        noteAdapter = NoteAdapter { note ->
+            val action = NoteListFragmentDirections.listToCreate(note.id)
             findNavController().navigate(action)
         }
 
-        binding.rvNotes.apply {
-            adapter = noteAdapter
-        }
+        adapter = noteAdapter
+    }
 
-        noteViewModel.getAllNotes().observe(this.viewLifecycleOwner) {
-            val res = it
-
-            res?.let {
-                noteAdapter.notes = res
-            }
-        }
-
-        binding.edtSearchNote.addTextChangedListener {
+    private fun addActionForEdtSearch() = binding.edtSearchNote.addTextChangedListener {
+        if (it != null && it.isNotEmpty())
             noteViewModel.searchNote(it.toString()).observe(this.viewLifecycleOwner) { notes ->
-                notes?.let {
-                    noteAdapter.notes = notes
-                }
+                notes?.let { noteAdapter.notes = notes }
             }
-        }
     }
 
     private fun addActionForBtnAddNote() = binding.ibtnAddNote.setOnClickListener {
         val action = NoteListFragmentDirections.listToCreate(-1)
         findNavController().navigate(action)
+    }
+
+    private fun getNotes() = viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+        noteViewModel.getAllNotes().observe(this@NoteListFragment.viewLifecycleOwner) { notes ->
+            notes?.let { noteAdapter.notes = it }
+        }
     }
 
     override fun onDestroyView() {

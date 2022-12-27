@@ -4,9 +4,12 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Patterns
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +21,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.gdacciaro.iOSDialog.iOSDialogBuilder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.hisu.notes.Constraints
+import com.hisu.notes.utils.Constraints
 import com.hisu.notes.MyApplication
+import com.hisu.notes.R
+import com.hisu.notes.utils.RealPathUtil
 import com.hisu.notes.databinding.FragmentCreateNoteBinding
 import com.hisu.notes.model.Note
 import com.hisu.notes.repository.NoteRepository
+import com.hisu.notes.ui.dialog.AddUrlDialog
 import com.hisu.notes.view_model.NoteViewModel
 import com.hisu.notes.view_model.NoteViewModelProviderFactory
 
@@ -43,7 +50,7 @@ class CreateNoteFragment : Fragment() {
         )
     }
 
-    private var resultLauncher: ActivityResultLauncher<Intent>?= null
+    private var resultLauncher: ActivityResultLauncher<Intent>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,35 +65,82 @@ class CreateNoteFragment : Fragment() {
 
         val noteID = navigationArgs.id
 
-        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {result ->
-            if(result.resultCode == Activity.RESULT_OK && result.data != null) {
-                noteViewModel.setNoteImage("")
-                binding.noteImageContainer.visibility = View.VISIBLE
-                binding.rimvNoteImage.setImageURI(result.data!!.data!!)
-            }
-        }
+        initPickImageResultLauncher()
+        initOnClickListener()
+        initMoreOptionsBottomSheet()
 
         if (noteID != -1) {
-            noteViewModel.getNote(noteID.toString()).observe(this.viewLifecycleOwner) { resultNote ->
-                note = resultNote
-                initMoreOptionBottomSheet(note)
+            noteViewModel.getNote(noteID.toString())
+                .observe(this.viewLifecycleOwner) { resultNote ->
+                    note = resultNote
+                    bindNote(note)
+                }
+        } else {
+            binding.apply {
+                tvDatetime.text = noteViewModel.getDateTime()
+                (divider.background as GradientDrawable).setColor(Color.parseColor("#333333"))
+                binding.ibtnSave.setOnClickListener { saveNote() }
             }
         }
-
-        initOnClickListener()
-        binding.tvDatetime.text = noteViewModel.getDateTime()
     }
 
-    private fun initMoreOptionBottomSheet(note: Note) = binding.apply {
-        edtNoteSubTitle.setText(note.title)
+    private fun initPickImageResultLauncher() {
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                    val uri = result.data!!.data!!
+                    binding.noteImageContainer.visibility = View.VISIBLE
+                    binding.rimvNoteImage.setImageURI(uri)
+                    noteViewModel.setNoteImage(RealPathUtil.getRealPath(requireContext(), uri))
+                }
+            }
+    }
+
+    private fun bindNote(note: Note) = binding.apply {
+        edtNoteTitle.setText(note.title)
         edtNoteSubTitle.setText(note.subtitle)
         edtNoteInput.setText(note.text)
-        tvDatetime.text = note.dateTime
 
-        layoutOptions.noteViewModel = noteViewModel
-        layoutOptions.lifecycleOwner = viewLifecycleOwner
-        layoutOptions.createNoteFragment = this@CreateNoteFragment
-        layoutOptions.tvOptionsTitle.setOnClickListener { bottomSheetState() }
+        note.url?.let {
+            noteUrlContainer.visibility = View.VISIBLE
+            tvUrl.text = it
+            noteViewModel.setNoteURL(it)
+        }
+
+        tvDatetime.text = note.dateTime
+        note.color?.let {
+            (divider.background as GradientDrawable).setColor(Color.parseColor(it))
+            noteViewModel.setNoteColor(it)
+        }
+
+        note.imagePath?.let {
+            rimvNoteImage.setImageBitmap(BitmapFactory.decodeFile(it))
+            noteImageContainer.visibility = View.VISIBLE
+            noteViewModel.setNoteImage(it)
+        }
+
+        ibtnSave.setOnClickListener { updateNote() }
+        ibtnRemoveImage.setOnClickListener { removeNoteImage() }
+        ibtnRemoveUrl.setOnClickListener { removeNoteUrl() }
+    }
+
+    private fun removeNoteImage() {
+        noteViewModel.setNoteImage(null)
+        binding.rimvNoteImage.setImageBitmap(null)
+        binding.noteImageContainer.visibility = View.GONE
+    }
+
+    private fun removeNoteUrl() {
+        noteViewModel.setNoteURL(null)
+        binding.tvUrl.text = ""
+        binding.noteUrlContainer.visibility = View.GONE
+    }
+
+    private fun initMoreOptionsBottomSheet() = binding.layoutOptions.apply {
+        noteViewModel = noteViewModel
+        lifecycleOwner = viewLifecycleOwner
+        createNoteFragment = this@CreateNoteFragment
+        tvOptionsTitle.setOnClickListener { bottomSheetState() }
     }
 
     private fun bottomSheetState() {
@@ -98,28 +152,96 @@ class CreateNoteFragment : Fragment() {
         }
     }
 
-    fun pickImage() {
+    private fun pickImage() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
         resultLauncher?.launch(intent)
     }
 
     fun addUrl() {
-        //todo: validate note b4 add or update
-        //todo: add image and url
+        val dialog = AddUrlDialog(requireContext(), Gravity.CENTER)
+        dialog.addUrlEvent {
+            val url = dialog.getUrl()
+            if (isValidURL(url)) {
+                BottomSheetBehavior.from(binding.layoutOptions.layoutContainer).state =
+                    BottomSheetBehavior.STATE_COLLAPSED
+                noteViewModel.setNoteURL(url)
+                binding.noteUrlContainer.visibility = View.VISIBLE
+                binding.tvUrl.text = noteViewModel.url.value
+                dialog.dismissDialog()
+            }
+        }
+        dialog.showDialog()
+    }
+
+    private fun isValidURL(url: String): Boolean {
+        if (url.isBlank() || url.isEmpty()) {
+            Toast.makeText(
+                context,
+                requireContext().getString(R.string.empty_url_err),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
+
+        if (!Patterns.WEB_URL.matcher(url).matches()) {
+            Toast.makeText(
+                context,
+                requireContext().getString(R.string.invalid_url_err),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
+
+        return true
     }
 
     fun deleteNote() {
-        noteViewModel.deleteNote(note)
-        findNavController().navigateUp()
+        iOSDialogBuilder(activity)
+            .setTitle(activity?.getString(R.string.delete_note))
+            .setSubtitle(activity?.getString(R.string.delete_note_confirm))
+            .setNegativeListener(activity?.getString(R.string.no)) { it.dismiss() }
+            .setPositiveListener(activity?.getString(R.string.yes)) {
+                it.dismiss()
+                noteViewModel.deleteNote(note)
+                findNavController().navigateUp()
+            }
+            .setBoldPositiveLabel(true)
+            .build().show()
+    }
+
+    private fun isValidNoteData(): Boolean {
+        if (binding.edtNoteTitle.text.toString().isBlank()) {
+            Toast.makeText(
+                context,
+                requireContext().getString(R.string.empty_note_title_err),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        } else if (binding.edtNoteSubTitle.text.toString()
+                .isBlank() && binding.edtNoteInput.text.toString().isBlank()
+        ) {
+            Toast.makeText(
+                context,
+                requireContext().getString(R.string.empty_note_err),
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
+        return true
     }
 
     fun requestPermissionsStorage() {
-        BottomSheetBehavior.from(binding.layoutOptions.layoutContainer).state = BottomSheetBehavior.STATE_COLLAPSED
+        BottomSheetBehavior.from(binding.layoutOptions.layoutContainer).state =
+            BottomSheetBehavior.STATE_COLLAPSED
         if (ContextCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), Constraints.REQUEST_STORAGE_PERMISSION_CODE)
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                Constraints.REQUEST_STORAGE_PERMISSION_CODE
+            )
         } else {
             pickImage()
         }
@@ -133,7 +255,7 @@ class CreateNoteFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constraints.REQUEST_STORAGE_PERMISSION_CODE && grantResults.isNotEmpty()) {
-            if (grantResults.get(0) == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 pickImage()
             } else {
                 Toast.makeText(context, "Permission Denied!", Toast.LENGTH_SHORT).show()
@@ -142,21 +264,55 @@ class CreateNoteFragment : Fragment() {
     }
 
     private fun initOnClickListener() = binding.apply {
-        backContainer.setOnClickListener { findNavController().popBackStack() }
-        binding.ibtnSave.setOnClickListener { saveNote() }
+        backContainer.setOnClickListener { backBtnPress() }
     }
 
     private fun saveNote() {
-        noteViewModel.setNoteColor("#333333")
-        noteViewModel.setNoteImage("#333333")
-        noteViewModel.setNoteURL("https://google.com")
+        if (isValidNoteData()) {
+            noteViewModel.addNewNote(
+                binding.edtNoteTitle.text.toString(),
+                binding.edtNoteSubTitle.text.toString(),
+                binding.edtNoteInput.text.toString(),
+                binding.tvDatetime.text.toString()
+            )
 
-        noteViewModel.addNewNote(
-            binding.edtNoteTitle.text.toString(),
-            binding.edtNoteSubTitle.text.toString(),
-            binding.edtNoteInput.text.toString(),
-            binding.tvDatetime.text.toString()
-        )
+            iOSDialogBuilder(activity)
+                .setTitle(activity?.getString(R.string.app_title))
+                .setSubtitle(activity?.getString(R.string.add_success_confirm))
+                .setPositiveListener(activity?.getString(R.string.confirm)) {
+                    noteViewModel.resetNote()
+                    backBtnPress()
+                    it.dismiss()
+                }
+                .build().show()
+        }
+    }
+
+    private fun backBtnPress() {
+        activity?.onBackPressed()
+        noteViewModel.resetNote()
+    }
+
+    private fun updateNote() {
+        if (isValidNoteData()) {
+            noteViewModel.updateNote(
+                navigationArgs.id,
+                binding.edtNoteTitle.text.toString(),
+                binding.edtNoteSubTitle.text.toString(),
+                binding.edtNoteInput.text.toString(),
+                noteViewModel.getDateTime()
+            )
+
+            iOSDialogBuilder(activity)
+                .setTitle(activity?.getString(R.string.app_title))
+                .setSubtitle(activity?.getString(R.string.update_success_confirm))
+                .setPositiveListener(activity?.getString(R.string.confirm)) {
+                    noteViewModel.resetNote()
+                    backBtnPress()
+                    it.dismiss()
+                }
+                .build().show()
+        }
     }
 
     fun setSubtitleDividerColor(color: String) {

@@ -72,11 +72,11 @@ class NoteViewModel(val noteRepository: NoteRepository) : ViewModel() {
         _noteColor.value = color
     }
 
-    fun setNoteImage(imagePath: String) {
+    fun setNoteImage(imagePath: String?) {
         _imagePath.value = imagePath
     }
 
-    fun setNoteURL(url: String) {
+    fun setNoteURL(url: String?) {
         _url.value = url
     }
 
@@ -86,5 +86,11 @@ class NoteViewModel(val noteRepository: NoteRepository) : ViewModel() {
 
     private fun updateNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         noteRepository.updateNote(note)
+    }
+
+    fun resetNote() {
+        _noteColor.value = "#333333"
+        _imagePath.value = null
+        _url.value = null
     }
 }

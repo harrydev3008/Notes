@@ -2,13 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_note"
     android:layout_marginStart="@dimen/_10sdp"
     android:layout_marginTop="@dimen/_10sdp"
     android:orientation="vertical"
-    android:padding="@dimen/_8sdp"
+    android:paddingBottom="@dimen/_8sdp"
     android:id="@+id/note_container">
-
+    
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/note_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        app:riv_corner_radius_top_left="@dimen/_10sdp"
+        app:riv_corner_radius_top_right="@dimen/_10sdp"
+        android:scaleType="centerCrop"/>
+    
     <TextView
         android:id="@+id/tv_note_title"
         android:layout_width="match_parent"
@@ -16,6 +28,8 @@
         android:textColor="@color/white"
         android:fontFamily="@font/ubuntu_bold"
         android:textSize="@dimen/_13ssp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_8sdp"
         android:includeFontPadding="false"
         android:text="@string/note_title" />
 
@@ -25,6 +39,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/noteSubtitleTextColor"
         android:fontFamily="@font/ubuntu"
+        android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_4sdp"
         android:textSize="@dimen/_11ssp"
         android:includeFontPadding="false"
@@ -38,6 +53,7 @@
         android:fontFamily="@font/ubuntu"
         android:layout_marginTop="@dimen/_4sdp"
         android:textSize="@dimen/_7ssp"
+        android:layout_marginStart="@dimen/_8sdp"
         android:includeFontPadding="false"
         android:text="@string/note_title" />
 

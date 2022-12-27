@@ -1,6 +1,10 @@
 package com.hisu.notes.ui.note_list
 
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -47,11 +51,23 @@ class NoteAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindNoteData(note: Note) = binding.apply {
+
             tvNoteTitle.text = note.title
             tvNoteSubtitle.text = note.subtitle
             tvNoteDatetime.text = note.dateTime
 
+            if(note.imagePath != null) {
+                noteImage.setImageBitmap(BitmapFactory.decodeFile(note.imagePath))
+                noteImage.visibility = View.VISIBLE
+            } else
+                noteImage.visibility = View.GONE
+
             noteContainer.setOnClickListener { itemClickListener.invoke(note) }
+
+            if(note.color != null)
+                (noteContainer.background as GradientDrawable).setColor(Color.parseColor(note.color))
+            else
+                (noteContainer.background as GradientDrawable).setColor(Color.parseColor("#333333"))
         }
     }
 }

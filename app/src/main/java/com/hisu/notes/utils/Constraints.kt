@@ -1,4 +1,4 @@
-package com.hisu.notes
+package com.hisu.notes.utils
 
 class Constraints {
     companion object {
